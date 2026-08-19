@@ -173,6 +173,20 @@ def run_checked(command: list[str]) -> None:
     subprocess.run(command, check=True)
 
 
+def activation_commands(
+    xray_changed: bool,
+    sing_box_changed: bool,
+    xray_service: str,
+    sing_box_service: str,
+) -> list[list[str]]:
+    commands: list[list[str]] = []
+    if xray_changed:
+        commands.append(["systemctl", "restart", xray_service])
+    if sing_box_changed:
+        commands.append(["systemctl", "restart", sing_box_service])
+    return commands
+
+
 def backup(path: Path) -> Path:
     destination = path.with_name(path.name + ".dedicated-egress-sync.previous")
     shutil.copy2(path, destination)
@@ -230,10 +244,10 @@ def apply(
             write_atomic(sing_box_path, json_bytes(sing_box_updated), sing_box_path)
         run_checked([xray_bin, "run", "-test", "-confdir", str(xray_path.parent)])
         run_checked([sing_box_bin, "check", "-c", str(sing_box_path)])
-        if xray_changed:
-            run_checked(["systemctl", "restart", xray_service])
-        if sing_box_changed:
-            run_checked(["systemctl", "reload", sing_box_service])
+        for command in activation_commands(
+            xray_changed, sing_box_changed, xray_service, sing_box_service
+        ):
+            run_checked(command)
         run_checked(["systemctl", "is-active", "--quiet", xray_service])
         run_checked(["systemctl", "is-active", "--quiet", sing_box_service])
         write_atomic(cache_path, source_text.encode())

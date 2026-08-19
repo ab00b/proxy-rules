@@ -4,6 +4,7 @@ import unittest
 
 from scripts.sync_dedicated_egress import (
     RuleListError,
+    activation_commands,
     migrate_legacy_labels,
     parse_rule_list,
     update_sing_box_config,
@@ -166,6 +167,22 @@ class MigrationTests(unittest.TestCase):
             ["dedicated-egress-health"],
         )
         self.assertEqual(migrated["route"]["final"], "default-egress")
+
+
+class ActivationTests(unittest.TestCase):
+    def test_both_cores_use_restart_after_config_change(self):
+        self.assertEqual(
+            activation_commands(
+                xray_changed=True,
+                sing_box_changed=True,
+                xray_service="xray.service",
+                sing_box_service="sing-box.service",
+            ),
+            [
+                ["systemctl", "restart", "xray.service"],
+                ["systemctl", "restart", "sing-box.service"],
+            ],
+        )
 
 
 if __name__ == "__main__":
