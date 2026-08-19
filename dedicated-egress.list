@@ -1,0 +1,43 @@
+# OpenAI and ChatGPT
+DOMAIN-SUFFIX,openai.com
+DOMAIN-SUFFIX,chatgpt.com
+DOMAIN-SUFFIX,oaistatic.com
+DOMAIN-SUFFIX,oaiusercontent.com
+DOMAIN-SUFFIX,oaistatsig.com
+DOMAIN-SUFFIX,openaimerge.com
+DOMAIN-SUFFIX,ct.sendgrid.net
+DOMAIN-SUFFIX,intercom.io
+DOMAIN-SUFFIX,intercomcdn.com
+DOMAIN,cdn.workos.com
+DOMAIN,challenges.cloudflare.com
+DOMAIN,forwarder.workos.com
+DOMAIN,humb.apple.com
+DOMAIN,images.workoscdn.com
+DOMAIN,js.stripe.com
+DOMAIN,o207216.ingest.sentry.io
+DOMAIN,o33249.ingest.sentry.io
+DOMAIN,rum.browser-intake-datadoghq.com
+DOMAIN,setup.workos.com
+DOMAIN,workos.imgix.net
+DOMAIN-SUFFIX,proxy-seller.com
+
+# Gemini and its Google authentication/runtime dependencies
+DOMAIN,gemini.google.com
+DOMAIN,www.google.com
+DOMAIN,accounts.google.com
+DOMAIN,oauth2.googleapis.com
+DOMAIN,clients1.google.com
+DOMAIN,play.googleapis.com
+DOMAIN,notifications-pa.googleapis.com
+DOMAIN,oauthaccountmanager.googleapis.com
+DOMAIN,robinfrontend-pa.googleapis.com
+
+# Microsoft authentication dependencies
+DOMAIN,login.live.com
+DOMAIN,login.microsoftonline.com
+DOMAIN,login.microsoft.com
+DOMAIN,aadcdn.msauth.net
+DOMAIN,logincdn.msauth.net
+DOMAIN,acctcdn.msftauth.net
+DOMAIN,df.cfp.microsoft.com
+DOMAIN,fpt.live.com
