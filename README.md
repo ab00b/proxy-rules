@@ -25,7 +25,7 @@ rule-providers:
     behavior: classical
     format: text
     url: https://raw.githubusercontent.com/ab00b/proxy-rules/main/dedicated-egress.list
-    path: ./RuleSet/DedicatedEgress.list
+    path: ./providers/DedicatedEgress.list
     interval: 86400
     proxy: 🚀 Proxy
 
