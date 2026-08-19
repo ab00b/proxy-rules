@@ -1,0 +1,45 @@
+name: Sync dedicated egress
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - dedicated-egress.list
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dedicated-egress-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Prepare restricted SSH identity
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.DEDICATED_EGRESS_SSH_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.DEDICATED_EGRESS_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/dedicated_egress
+          chmod 600 ~/.ssh/dedicated_egress
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Synchronize ASMU
+        env:
+          HOST: ${{ secrets.ASMU_SYNC_HOST }}
+        run: >-
+          ssh -T -o BatchMode=yes -o IdentitiesOnly=yes
+          -i ~/.ssh/dedicated_egress rule-sync@"$HOST"
+
+      - name: Synchronize ITL
+        env:
+          HOST: ${{ secrets.ITL_SYNC_HOST }}
+        run: >-
+          ssh -T -o BatchMode=yes -o IdentitiesOnly=yes
+          -i ~/.ssh/dedicated_egress rule-sync@"$HOST"
