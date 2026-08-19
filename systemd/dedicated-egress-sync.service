@@ -1,0 +1,13 @@
+[Unit]
+Description=Synchronize dedicated egress rules from GitHub
+Wants=network-online.target
+After=network-online.target xray.service sing-box.service
+
+[Service]
+Type=oneshot
+User=root
+ExecStart=/usr/local/sbin/dedicated-egress-sync
+TimeoutStartSec=120
+
+[Install]
+WantedBy=multi-user.target

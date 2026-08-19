@@ -38,3 +38,21 @@ place the rule-set reference before broader global or catch-all rules.
 
 This repository contains match expressions only. It does not contain proxy
 nodes, credentials, controller secrets, or private server addresses.
+
+## Server synchronization
+
+ASMU and ITL use `scripts/sync_dedicated_egress.py` to render this same text
+list into their Xray and Sing-box JSON configurations. Commented rules remain
+documented but are not rendered.
+
+The installed `dedicated-egress-sync.timer` runs two minutes after boot and
+then every six hours, with up to five minutes of randomized delay. A GitHub
+Actions workflow also requests an immediate sync whenever
+`dedicated-egress.list` changes on `main`. The Actions SSH key is restricted on
+each server to starting this one sync service; the timer remains the fallback.
+
+Manual immediate synchronization on a server:
+
+```sh
+systemctl start dedicated-egress-sync.service
+```

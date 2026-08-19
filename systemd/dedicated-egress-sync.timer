@@ -1,0 +1,12 @@
+[Unit]
+Description=Periodic dedicated egress rule synchronization
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=6h
+RandomizedDelaySec=5min
+Persistent=true
+Unit=dedicated-egress-sync.service
+
+[Install]
+WantedBy=timers.target
