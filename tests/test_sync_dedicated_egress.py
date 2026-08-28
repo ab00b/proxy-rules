@@ -55,8 +55,9 @@ class ParseRuleListTests(unittest.TestCase):
             if line.startswith("# DOMAIN")
         ]
 
-        self.assertEqual(len(active), 18)
+        self.assertEqual(len(active), 19)
         self.assertEqual(len(disabled_openai), 20)
+        self.assertIn(("DOMAIN", "labs.google"), active)
         self.assertFalse(
             any("openai" in domain or "chatgpt" in domain for _, domain in active)
         )
