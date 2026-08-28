@@ -27,6 +27,8 @@ DOMAIN-SUFFIX,proxy-seller.com
 # Gemini and its Google authentication/runtime dependencies
 DOMAIN,gemini.google.com
 DOMAIN,labs.google
+DOMAIN,flow.google
+DOMAIN,flow-content.google
 DOMAIN,www.google.com
 DOMAIN,accounts.google.com
 DOMAIN,oauth2.googleapis.com
