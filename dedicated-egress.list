@@ -39,6 +39,7 @@ DOMAIN,play.googleapis.com
 DOMAIN,notifications-pa.googleapis.com
 DOMAIN,oauthaccountmanager.googleapis.com
 DOMAIN,robinfrontend-pa.googleapis.com
+DOMAIN,signaler-pa.googleapis.com
 
 # Microsoft authentication dependencies
 DOMAIN,login.live.com
