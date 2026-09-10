@@ -34,7 +34,7 @@ print(json.dumps({
  'cache_has_rule': b'DOMAIN,signaler-pa.googleapis.com' in c,
  'xray_has_rule': any(r.get('outboundTag') == 'dedicated-egress' and 'full:' + h in r.get('domain', []) for r in x['routing']['rules']),
  'sing_box_has_rule': any(r.get('outbound') == 'dedicated-egress' and h in r.get('domain', []) for r in s['route']['rules']),
- 'source_matches_live_routes': f['route'] == s['route'],
+ 'source_matches_live_routes': normalized(f)['route'] == normalized(s)['route'],
  'renewal_merge_matches_live': True,
  'services': subprocess.run(['systemctl', 'is-active', 'xray.service', 'sing-box.service', 'dedicated-egress-sync.timer'], capture_output=True, text=True).stdout.splitlines(),
 }))
