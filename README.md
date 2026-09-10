@@ -46,10 +46,17 @@ list into their Xray and Sing-box JSON configurations. Commented rules remain
 documented but are not rendered.
 
 The installed `dedicated-egress-sync.timer` runs two minutes after boot and
-then every six hours, with up to five minutes of randomized delay. A GitHub
-Actions workflow also requests an immediate sync whenever
-`dedicated-egress.list` changes on `main`. The Actions SSH key is restricted on
-each server to starting this one sync service; the timer remains the fallback.
+then every two minutes, with up to 15 seconds of randomized delay. Servers
+pull the canonical list using outbound HTTPS; SSH remains Tailscale-only.
+GitHub Actions validates changes and does not connect to the servers.
+
+Sing-box routing and outbound configuration lives in the host-private merge
+fragment `config/90_dedicated_egress.json`. Synchronization updates both this
+fragment and the active configuration, so certificate renewal preserves routes.
+The sync command and `scripts/refresh-sing-box-tls-config` share the lock
+`/run/lock/dedicated-egress-config.lock`. Credentials stay on each server.
+Unchanged rules do not restart either proxy core. CI success proves repository
+validation; deployment is verified separately through server cache and runtime.
 
 Manual immediate synchronization on a server:
 

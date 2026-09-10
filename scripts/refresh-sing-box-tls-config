@@ -1,0 +1,25 @@
+#!/bin/sh
+set -eu
+umask 077
+exec 9>/run/lock/dedicated-egress-config.lock
+flock -x 9
+
+SING_BOX_BIN=/etc/v2ray-agent/sing-box/sing-box
+SING_BOX_CONFIG_DIR=/etc/v2ray-agent/sing-box/conf
+SING_BOX_CONFIG="$SING_BOX_CONFIG_DIR/config.json"
+SING_BOX_NEXT="$SING_BOX_CONFIG_DIR/config.cert-renewal-next"
+SING_BOX_PREVIOUS="$SING_BOX_CONFIG_DIR/config.pre-cert-renewal"
+
+# Fail before replacing the live config if the durable routing source is absent.
+test -s "$SING_BOX_CONFIG_DIR/config/90_dedicated_egress.json"
+"$SING_BOX_BIN" merge "$(basename "$SING_BOX_NEXT")" -C "$SING_BOX_CONFIG_DIR/config" -D "$SING_BOX_CONFIG_DIR" >/dev/null
+"$SING_BOX_BIN" check -c "$SING_BOX_NEXT" >/dev/null
+cp -p "$SING_BOX_CONFIG" "$SING_BOX_PREVIOUS"
+chown root:root "$SING_BOX_NEXT"
+chmod 600 "$SING_BOX_NEXT"
+mv -f "$SING_BOX_NEXT" "$SING_BOX_CONFIG"
+if ! systemctl restart sing-box.service || ! systemctl is-active --quiet sing-box.service; then
+    cp -p "$SING_BOX_PREVIOUS" "$SING_BOX_CONFIG"
+    systemctl restart sing-box.service
+    exit 1
+fi

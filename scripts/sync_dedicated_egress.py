@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+import fcntl
 import hashlib
 import json
 import os
@@ -23,6 +24,7 @@ DEFAULT_URL = (
 DEFAULT_XRAY_CONFIG = "/etc/v2ray-agent/xray/conf/13_dedicated_egress.json"
 DEFAULT_SING_BOX_CONFIG = "/etc/v2ray-agent/sing-box/conf/config.json"
 DEFAULT_CACHE = "/var/lib/dedicated-egress/dedicated-egress.list"
+DEFAULT_SING_BOX_FRAGMENT = "/etc/v2ray-agent/sing-box/conf/config/90_dedicated_egress.json"
 DOMAIN_RE = re.compile(
     r"^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+"
     r"[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$"
@@ -208,6 +210,7 @@ def apply(
     sing_box_service: str,
     migrate_labels: bool,
     dry_run: bool,
+    sing_box_fragment: Path | None = None,
 ) -> dict:
     rules = parse_rule_list(source_text)
     xray_original = load_json(xray_path)
@@ -222,6 +225,10 @@ def apply(
     )
     update_xray_config(xray_updated, rules)
     update_sing_box_config(sing_box_updated, rules)
+    fragment_updated = None
+    if sing_box_fragment is not None:
+        fragment_updated = load_json(sing_box_fragment)
+        update_sing_box_config(fragment_updated, rules)
     xray_changed = xray_updated != xray_original
     sing_box_changed = sing_box_updated != sing_box_original
     digest = hashlib.sha256(source_text.encode()).hexdigest()
@@ -237,7 +244,10 @@ def apply(
 
     xray_backup = backup(xray_path)
     sing_box_backup = backup(sing_box_path)
+    fragment_backup = backup(sing_box_fragment) if sing_box_fragment else None
     try:
+        if fragment_updated is not None:
+            write_atomic(sing_box_fragment, json_bytes(fragment_updated), sing_box_fragment)
         if xray_changed:
             write_atomic(xray_path, json_bytes(xray_updated), xray_path)
         if sing_box_changed:
@@ -254,6 +264,8 @@ def apply(
     except Exception:
         restore(xray_backup, xray_path)
         restore(sing_box_backup, sing_box_path)
+        if fragment_backup is not None:
+            restore(fragment_backup, sing_box_fragment)
         subprocess.run(["systemctl", "restart", xray_service], check=False)
         subprocess.run(["systemctl", "restart", sing_box_service], check=False)
         raise
@@ -266,6 +278,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--source-file")
     parser.add_argument("--xray-config", default=DEFAULT_XRAY_CONFIG)
     parser.add_argument("--sing-box-config", default=DEFAULT_SING_BOX_CONFIG)
+    parser.add_argument("--sing-box-fragment", default=DEFAULT_SING_BOX_FRAGMENT)
     parser.add_argument("--cache", default=DEFAULT_CACHE)
     parser.add_argument("--xray-bin", default="/etc/v2ray-agent/xray/xray")
     parser.add_argument(
@@ -296,10 +309,14 @@ def main() -> int:
         sing_box_service=args.sing_box_service,
         migrate_labels=args.migrate_labels,
         dry_run=args.dry_run,
+        sing_box_fragment=Path(args.sing_box_fragment),
     )
     print(json.dumps(result, sort_keys=True))
     return 0
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    # Certificate refresh uses this same lock before merging source fragments.
+    with open("/run/lock/dedicated-egress-config.lock", "a") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        raise SystemExit(main())
