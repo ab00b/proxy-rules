@@ -41,6 +41,12 @@ DOMAIN,oauthaccountmanager.googleapis.com
 DOMAIN,robinfrontend-pa.googleapis.com
 DOMAIN,signaler-pa.googleapis.com
 
+# NotebookLM / Gemini Notebook sites and legacy redirects
+DOMAIN,notebook.google
+DOMAIN,notebook.google.com
+DOMAIN,notebooklm.google
+DOMAIN,notebooklm.google.com
+
 # Microsoft authentication dependencies
 DOMAIN,login.live.com
 DOMAIN,login.microsoftonline.com

@@ -55,7 +55,7 @@ class ParseRuleListTests(unittest.TestCase):
             if line.startswith("# DOMAIN")
         ]
 
-        self.assertEqual(len(active), 24)
+        self.assertEqual(len(active), 28)
         self.assertEqual(len(disabled_openai), 20)
         self.assertIn(("DOMAIN", "labs.google"), active)
         self.assertIn(("DOMAIN", "labs.google.com"), active)
@@ -70,6 +70,40 @@ class ParseRuleListTests(unittest.TestCase):
 class RendererTests(unittest.TestCase):
     def setUp(self):
         self.rules = parse_rule_list(SAMPLE_RULES)
+
+    def test_notebook_sites_render_as_exact_dedicated_domains(self):
+        source = (
+            Path(__file__).resolve().parents[1] / "dedicated-egress.list"
+        ).read_text(encoding="utf-8")
+        rules = parse_rule_list(source)
+        xray = {
+            "routing": {
+                "rules": [{"domain": [], "outboundTag": "dedicated-egress"}]
+            }
+        }
+        sing_box = {
+            "route": {
+                "rules": [
+                    {"domain": [], "outbound": "dedicated-egress"},
+                    {"domain_suffix": [], "outbound": "dedicated-egress"},
+                ]
+            }
+        }
+
+        update_xray_config(xray, rules)
+        update_sing_box_config(sing_box, rules)
+
+        for host in (
+            "notebook.google",
+            "notebook.google.com",
+            "notebooklm.google",
+            "notebooklm.google.com",
+        ):
+            with self.subTest(host=host):
+                self.assertIn("full:" + host, xray["routing"]["rules"][0]["domain"])
+                self.assertIn(host, sing_box["route"]["rules"][0]["domain"])
+        for suffix in ("google", "google.com", "googleapis.com"):
+            self.assertNotIn(("DOMAIN-SUFFIX", suffix), rules)
 
     def test_xray_rule_is_replaced(self):
         config = {
