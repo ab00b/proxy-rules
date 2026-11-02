@@ -24,7 +24,7 @@ Use existing server-pulled synchronization, then compare canonical source and ca
 
 ## Dedicated client group
 
-The visible Surge group `✳️ Claude线路` belongs to 自动分流. It copies the existing dedicated group's ordered concrete candidates and probe parameters, with no ordinary-egress fallback. Existing per-policy probe URLs still test Gemini availability; the group name does not imply a Claude-specific health check. `🤖 Codex线路` and `✨ Gemini可用线路` retain their names and behavior.
+The visible Surge group `✳️ Claude线路` belongs to 自动分流, with no ordinary-egress fallback. The [personal/team profile renderer](personal-team-isp.md) now limits all dedicated groups to the assigned server and fixed ISP exit: ITL for the personal profile, ASMU for the colleague profile. Existing per-policy probe URLs still test Gemini availability; the group name does not imply a Claude-specific health check. `🤖 Codex线路` retains its ordinary-egress behavior. Gemini's dedicated group is also role-specific and no longer contains ordinary Snell fallbacks.
 
 `claude-egress.list` is a generated client view of the Claude block in `dedicated-egress.list`, not another authority. Regenerate with `python3 -m scripts.render_claude_rules`; CI rejects stale generated content. Servers continue consuming the complete canonical list.
 
