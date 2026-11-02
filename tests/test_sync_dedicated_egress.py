@@ -55,7 +55,7 @@ class ParseRuleListTests(unittest.TestCase):
             if line.startswith("# DOMAIN")
         ]
 
-        self.assertEqual(len(active), 28)
+        self.assertEqual(len(active), 34)
         self.assertEqual(len(disabled_openai), 20)
         self.assertIn(("DOMAIN", "labs.google"), active)
         self.assertIn(("DOMAIN", "labs.google.com"), active)
@@ -104,6 +104,25 @@ class RendererTests(unittest.TestCase):
                 self.assertIn(host, sing_box["route"]["rules"][0]["domain"])
         for suffix in ("google", "google.com", "googleapis.com"):
             self.assertNotIn(("DOMAIN-SUFFIX", suffix), rules)
+
+    def test_claude_families_render_as_suffixes_on_both_servers(self):
+        source = (Path(__file__).resolve().parents[1] / "dedicated-egress.list").read_text()
+        rules = parse_rule_list(source)
+        families = {"anthropic.com", "claude.ai", "claude.com", "claude.app",
+                    "claudeusercontent.com", "claudemcpcontent.com"}
+        xray = {"routing": {"rules": [{"domain": [], "outboundTag": "dedicated-egress"}]}}
+        sing_box = {"route": {"rules": [
+            {"domain": [], "outbound": "dedicated-egress"},
+            {"domain_suffix": [], "outbound": "dedicated-egress"}]}}
+        update_xray_config(xray, rules)
+        update_sing_box_config(sing_box, rules)
+        for family in families:
+            with self.subTest(family=family):
+                self.assertIn(("DOMAIN-SUFFIX", family), rules)
+                self.assertIn("domain:" + family, xray["routing"]["rules"][0]["domain"])
+                self.assertIn(family, sing_box["route"]["rules"][1]["domain_suffix"])
+        for shared in ("cloudflare.com", "googleapis.com", "sentry.io", "githubusercontent.com"):
+            self.assertNotIn(("DOMAIN-SUFFIX", shared), rules)
 
     def test_xray_rule_is_replaced(self):
         config = {

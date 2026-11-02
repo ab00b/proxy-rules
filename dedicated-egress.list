@@ -21,6 +21,15 @@
 # DOMAIN,setup.workos.com
 # DOMAIN,workos.imgix.net
 
+# Claude / Anthropic: web, API, authentication, downloads, previews and MCP content
+# https://code.claude.com/docs/en/desktop#network-access-requirements
+DOMAIN-SUFFIX,anthropic.com
+DOMAIN-SUFFIX,claude.ai
+DOMAIN-SUFFIX,claude.com
+DOMAIN-SUFFIX,claude.app
+DOMAIN-SUFFIX,claudeusercontent.com
+DOMAIN-SUFFIX,claudemcpcontent.com
+
 # Dedicated proxy provider qualification
 DOMAIN-SUFFIX,proxy-seller.com
 
