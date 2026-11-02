@@ -6,6 +6,7 @@ on:
     paths:
       - dedicated-egress.list
       - claude-egress.list
+      - github-download.list
       - scripts/**
       - tests/**
       - .github/workflows/sync-dedicated-egress.yml
@@ -25,6 +26,13 @@ jobs:
         run: python3 -m unittest discover -s tests
       - name: Check generated Claude client view
         run: python3 -m scripts.render_claude_rules --check
+      - name: Validate GitHub download rules
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from scripts.sync_dedicated_egress import parse_rule_list
+          parse_rule_list(Path("github-download.list").read_text())
+          PY
       - name: Validate renewal script syntax
         run: sh -n scripts/refresh-sing-box-tls-config
       # Servers pull rules via outbound HTTPS; CI needs no SSH or tailnet keys.

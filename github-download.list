@@ -1,0 +1,5 @@
+# GitHub clone, API, archive, release and content destinations.
+# Ordinary-egress throughput routing; not the dedicated ISP rule list.
+DOMAIN-SUFFIX,github.com
+DOMAIN-SUFFIX,githubusercontent.com
+DOMAIN-SUFFIX,githubassets.com
