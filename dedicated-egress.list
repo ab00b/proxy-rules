@@ -21,14 +21,35 @@
 # DOMAIN,setup.workos.com
 # DOMAIN,workos.imgix.net
 
-# Claude / Anthropic: web, API, authentication, downloads, previews and MCP content
-# https://code.claude.com/docs/en/desktop#network-access-requirements
+# Claude / Anthropic: official desktop requirements plus community domain inventories
+# Sources and shared-host limitations: docs/claude-routing.md
+DOMAIN-SUFFIX,ant.dev
 DOMAIN-SUFFIX,anthropic.com
+DOMAIN-SUFFIX,anthropic.team
+DOMAIN-SUFFIX,antspace.dev
+DOMAIN-SUFFIX,chatbotclaude.com
+DOMAIN-SUFFIX,clau.de
 DOMAIN-SUFFIX,claude.ai
-DOMAIN-SUFFIX,claude.com
 DOMAIN-SUFFIX,claude.app
-DOMAIN-SUFFIX,claudeusercontent.com
+DOMAIN-SUFFIX,claude.com
+DOMAIN-SUFFIX,claude.dev
+DOMAIN-SUFFIX,claude.new
+DOMAIN-SUFFIX,claude.site
+DOMAIN-SUFFIX,claudeacademy.com
+DOMAIN-SUFFIX,claudemcpclient.com
 DOMAIN-SUFFIX,claudemcpcontent.com
+DOMAIN-SUFFIX,claudepages.dev
+DOMAIN-SUFFIX,claudestudio.com
+DOMAIN-SUFFIX,claudeusercontent.com
+DOMAIN-SUFFIX,modelcontextprotocol.io
+
+# Claude-specific infrastructure and exact shared feature/analytics endpoints
+DOMAIN,anthropic.com.cdn.cloudflare.net
+DOMAIN,servd-anthropic-website.b-cdn.net
+DOMAIN,anthropic.auth0.com
+DOMAIN,anthropic-com.ghost.io
+DOMAIN,cdn.growthbook.io
+DOMAIN,cdn.usefathom.com
 
 # Dedicated proxy provider qualification
 DOMAIN-SUFFIX,proxy-seller.com

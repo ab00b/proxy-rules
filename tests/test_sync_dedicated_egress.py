@@ -55,7 +55,7 @@ class ParseRuleListTests(unittest.TestCase):
             if line.startswith("# DOMAIN")
         ]
 
-        self.assertEqual(len(active), 34)
+        self.assertEqual(len(active), 53)
         self.assertEqual(len(disabled_openai), 20)
         self.assertIn(("DOMAIN", "labs.google"), active)
         self.assertIn(("DOMAIN", "labs.google.com"), active)
@@ -109,7 +109,11 @@ class RendererTests(unittest.TestCase):
         source = (Path(__file__).resolve().parents[1] / "dedicated-egress.list").read_text()
         rules = parse_rule_list(source)
         families = {"anthropic.com", "claude.ai", "claude.com", "claude.app",
-                    "claudeusercontent.com", "claudemcpcontent.com"}
+                    "claudeusercontent.com", "claudemcpcontent.com", "claudemcpclient.com",
+                    "clau.de", "ant.dev", "anthropic.team", "antspace.dev",
+                    "chatbotclaude.com", "claude.dev", "claude.new", "claude.site",
+                    "claudeacademy.com", "claudepages.dev", "claudestudio.com",
+                    "modelcontextprotocol.io"}
         xray = {"routing": {"rules": [{"domain": [], "outboundTag": "dedicated-egress"}]}}
         sing_box = {"route": {"rules": [
             {"domain": [], "outbound": "dedicated-egress"},
@@ -121,6 +125,12 @@ class RendererTests(unittest.TestCase):
                 self.assertIn(("DOMAIN-SUFFIX", family), rules)
                 self.assertIn("domain:" + family, xray["routing"]["rules"][0]["domain"])
                 self.assertIn(family, sing_box["route"]["rules"][1]["domain_suffix"])
+        for host in ("anthropic.com.cdn.cloudflare.net", "servd-anthropic-website.b-cdn.net",
+                     "anthropic.auth0.com", "anthropic-com.ghost.io", "cdn.growthbook.io",
+                     "cdn.usefathom.com"):
+            self.assertIn(("DOMAIN", host), rules)
+            self.assertIn("full:" + host, xray["routing"]["rules"][0]["domain"])
+            self.assertIn(host, sing_box["route"]["rules"][0]["domain"])
         for shared in ("cloudflare.com", "googleapis.com", "sentry.io", "githubusercontent.com"):
             self.assertNotIn(("DOMAIN-SUFFIX", shared), rules)
 

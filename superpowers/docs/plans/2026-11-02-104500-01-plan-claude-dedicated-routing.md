@@ -2,10 +2,10 @@
 
 **Goal:** Route Claude-owned domains through dedicated egress on Surge, ASMU and ITL using one canonical list.
 **Why planning is required:** Cross-system live routing change.
-**Acceptance:** Six official domain families render as suffix rules; OpenAI stays excluded; publish only task changes based on latest origin/main; GitHub automation and both server caches, Xray, sing-box live/source fragments and active services agree; Surge resource refresh and Reload Profile preserve engine uptime; real requests report dedicated policies. HTTP challenges and authenticated application acceptance are separate results.
+**Acceptance:** Official and community domain families render as suffix rules; OpenAI stays excluded; publish only task changes based on latest origin/main; GitHub automation and both server caches, Xray, sing-box live/source fragments and active services agree; Surge resource refresh and Reload Profile preserve engine uptime; real requests report dedicated policies. HTTP challenges and authenticated application acceptance are separate results.
 
 ### Outcome 1: Canonical rules
-- Work: Add anthropic.com, claude.ai, claude.com, claude.app, claudeusercontent.com, claudemcpcontent.com suffixes; regression coverage for both renderers. Shared third-party CDN domains remain on existing routes unless Claude-specific runtime evidence requires a narrow rule.
+- Work: Add the 19 suffixes and 6 exact hosts documented in docs/claude-routing.md after cross-checking five GitHub inventories; regression coverage for both renderers. Shared third-party CDN domains remain on existing routes unless Claude-specific runtime evidence requires a narrow rule.
 - Verify: python3 -m unittest discover -s tests -v; inspect task diff.
 
 ### Outcome 2: Delivery and runtime
