@@ -8,10 +8,13 @@ a dedicated client group.
 Surge reference:
 
 ```ini
+DOMAIN,raw.githubusercontent.com,🐙 GitHub线路
 RULE-SET,https://raw.githubusercontent.com/ab00b/proxy-rules/main/github-download.list,🐙 GitHub线路
 ```
 
-Place it before general domain proxy rules while retaining existing management
+The exact raw host rule bootstraps the remote ruleset through its own fast path.
+This avoids depending on the generic Smart choice before the ruleset is loaded.
+Place these rules before general domain proxy rules while retaining existing management
 and process-rule precedence. The list covers github.com and its API, codeload
 and SSH hosts, GitHub's content/release hosts under githubusercontent.com, and
 githubassets.com. It does not include arbitrary GitHub Pages, Copilot, or shared
@@ -38,3 +41,9 @@ throughput. A still-reachable slow line requires manual override or remeasuremen
 Existing clone connections keep their original node until reconnected. No server
 configuration or global Smart-group change is required. iOS needs its own
 configuration refresh and network acceptance.
+
+Final unforced clone after activation transferred approximately 12.60 MB in
+11.02 seconds (~1.14 MB/s), completed at the same commit, and passed object
+connectivity validation. Surge recorded `GitHub-ITL-hy2` selected by the new
+`github-download.list` rule. This automatic-path result is separate from the
+2.50 MB/s isolated-policy sample above.
