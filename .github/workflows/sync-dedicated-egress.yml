@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - dedicated-egress.list
+      - claude-egress.list
       - scripts/**
       - tests/**
       - .github/workflows/sync-dedicated-egress.yml
@@ -22,6 +23,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Validate routing and durable merge behavior
         run: python3 -m unittest discover -s tests
+      - name: Check generated Claude client view
+        run: python3 -m scripts.render_claude_rules --check
       - name: Validate renewal script syntax
         run: sh -n scripts/refresh-sing-box-tls-config
       # Servers pull rules via outbound HTTPS; CI needs no SSH or tailnet keys.

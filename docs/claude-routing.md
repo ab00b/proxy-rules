@@ -21,3 +21,17 @@ No keyword rules, NTP catch-all or IP/ASN rules were copied. The canonical forma
 ## Activation
 
 Use existing server-pulled synchronization, then compare canonical source and caches, Xray, sing-box runtime and renewal fragments. Surge refreshes its canonical RULE-SET and uses Reload Profile, preserving engine uptime. Existing TCP fallback and dedicated UDP groups remain unchanged. Original ordinary Snell fallback listeners continue their existing default-egress behavior.
+
+## Dedicated client group
+
+The visible Surge group `✳️ Claude线路` belongs to 自动分流. It copies the existing dedicated group's ordered concrete candidates and probe parameters, with no ordinary-egress fallback. Existing per-policy probe URLs still test Gemini availability; the group name does not imply a Claude-specific health check. `🤖 Codex线路` and `✨ Gemini可用线路` retain their names and behavior.
+
+`claude-egress.list` is a generated client view of the Claude block in `dedicated-egress.list`, not another authority. Regenerate with `python3 -m scripts.render_claude_rules`; CI rejects stale generated content. Servers continue consuming the complete canonical list.
+
+Surge references the generated view immediately after the existing shared UDP guard and before the general dedicated ruleset:
+
+```ini
+RULE-SET,https://raw.githubusercontent.com/ab00b/proxy-rules/main/claude-egress.list,✳️ Claude线路
+```
+
+The shared UDP guard remains first because TrustTunnel does not support Surge UDP relay. UDP keeps its existing dedicated UDP group and QUIC-blocking behavior. The Claude group represents the existing TCP route with independent visibility and manual override.
